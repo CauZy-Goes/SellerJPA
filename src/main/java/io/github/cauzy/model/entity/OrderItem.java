@@ -1,9 +1,20 @@
 package io.github.cauzy.model.entity;
 
+import jakarta.persistence.*;
+
+@Entity
 public class OrderItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private ClientOrder order;
+
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private ClientOrder clientOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
     private Integer quantity;
 
@@ -16,11 +27,11 @@ public class OrderItem {
     }
 
     public ClientOrder getOrder() {
-        return order;
+        return clientOrder;
     }
 
     public void setOrder(ClientOrder order) {
-        this.order = order;
+        this.clientOrder = order;
     }
 
     public Product getProduct() {

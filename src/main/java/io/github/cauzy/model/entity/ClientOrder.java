@@ -1,14 +1,37 @@
 package io.github.cauzy.model.entity;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+@Entity
+@Table(name = "client_order")
 public class ClientOrder {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id")
     private Client client;
     private LocalDate orderDate;
+
+    @Column(name = "total", length = 20, precision = 2)
     private BigDecimal total;
+
+    @OneToMany(mappedBy = "clientOrder")
+    private List<OrderItem> orderItems;
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 
     public Integer getId() {
         return id;

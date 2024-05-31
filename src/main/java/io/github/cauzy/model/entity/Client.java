@@ -3,6 +3,8 @@ package io.github.cauzy.model.entity;
 import jakarta.persistence.*;
 
 import java.lang.annotation.Target;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "client") // se o nome for diferente, se for igual n precisa
@@ -16,7 +18,18 @@ public class Client {
     @Column(name = "name", length = 100)
     private String name;
 
+    @OneToMany(mappedBy = "client")
+    private Set<ClientOrder> clientOrders;
+
     public Client() {}
+
+    public Set<ClientOrder> getClientOrders() {
+        return clientOrders;
+    }
+
+    public void setOrders(Set<ClientOrder> orders) {
+        this.clientOrders = orders;
+    }
 
     public Client(String name) {
         this.name = name;
