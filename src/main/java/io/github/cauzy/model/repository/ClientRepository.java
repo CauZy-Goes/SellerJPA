@@ -1,59 +1,19 @@
 package io.github.cauzy.model.repository;
 
 import io.github.cauzy.model.entity.Client;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-@Repository // contem o exception translator
-public class ClientRepository {
+public interface ClientRepository extends JpaRepository<Client, Integer> {
 
-    @Autowired
-    private EntityManager entityManager;
+    // cuidado que tem camel case
 
-    @Transactional
-    public Client save(Client client) {
-        entityManager.persist(client); // add
-        return client;
-    }
+    List<Client> findByNameLike(String name); // querry methods
 
-    @Transactional
-    public void delete(Client client) {
-        if(!entityManager.contains(client)) {
-            client = entityManager.merge(client);
-        }
-            entityManager.remove(client);
-    }
+    List<Client> findByNameOrId(String name, Integer id);
 
-    @Transactional
-    public void delete(int id) {
-        delete(entityManager.find(Client.class, id));
-    }
+    Client findOneByName(String name);
 
-    @Transactional
-    public Client update(Client client) {
-        entityManager.merge(client);
-        return client;
-    }
-
-    @Transactional(readOnly = true) //optimiza
-    public List<Client> findByName(String name) {
-        String jpql = "select c from Client c where c.name like :name";
-        TypedQuery<Client> query = entityManager.createQuery(jpql, Client.class);
-        query.setParameter("name", "%" + name + "%");
-        return query.getResultList();
-    }
-
-    @Transactional(readOnly = true) //optimiza
-    public List<Client> findAll() {
-        return entityManager.createQuery("from Client ", Client.class).getResultList();
-    }
+    boolean existsByName(String name);
 }

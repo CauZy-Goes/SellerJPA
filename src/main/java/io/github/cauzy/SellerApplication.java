@@ -19,23 +19,9 @@ public class SellerApplication {
             clientRepository.save(new Client("Caua"));
             clientRepository.save(new Client("maria"));
 
-            List<Client> allClients = clientRepository.findAll();
-            allClients.forEach(System.out::println);
-
-            allClients.forEach( c -> {
-                c.setName(c.getName() + " atualizado.");
-                clientRepository.update(c);
-            });
-
-            clientRepository.findByName("ma").forEach(System.out::println);
-
-            allClients = clientRepository.findAll();
-            allClients.forEach(System.out::println);
-
-            clientRepository.delete(1);
-
-            allClients = clientRepository.findAll();
-            allClients.forEach(System.out::println);
+            System.out.println(clientRepository.existsByName("maria"));
+            System.out.println(clientRepository.findOneByName("Caua"));
+            System.out.println(clientRepository.findByNameOrId(null,1));
         };
     }
 
