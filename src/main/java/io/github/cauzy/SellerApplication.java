@@ -20,7 +20,21 @@ public class SellerApplication {
             clientRepository.save(new Client("maria"));
 
             List<Client> allClients = clientRepository.findAll();
+            allClients.forEach(System.out::println);
 
+            allClients.forEach( c -> {
+                c.setName(c.getName() + " atualizado.");
+                clientRepository.update(c);
+            });
+
+            clientRepository.findByName("ma").forEach(System.out::println);
+
+            allClients = clientRepository.findAll();
+            allClients.forEach(System.out::println);
+
+            clientRepository.delete(1);
+
+            allClients = clientRepository.findAll();
             allClients.forEach(System.out::println);
         };
     }
