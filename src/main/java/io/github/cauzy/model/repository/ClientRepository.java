@@ -1,10 +1,13 @@
 package io.github.cauzy.model.repository;
 
 import io.github.cauzy.model.entity.Client;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,49 +16,44 @@ import java.util.List;
 @Repository // contem o exception translator
 public class ClientRepository {
 
-    private static String INSERT = "insert into client (name) values (?)";
-    private static String SELECT_ALL = "SELECT * FROM CLIENT ";
-    private static String UPDATE = "update client set name=? where id=?";
-    private static String DELETE = "delete from client where id=?";
-
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private EntityManager entityManager;
 
+    @Transactional
     public Client save(Client client) {
-        jdbcTemplate.update(INSERT, new Object[] {client.getName()} );
+        entityManager.persist(client); // add
         return client;
     }
 
+    @Transactional
     public void delete(Client client) {
-        delete(client.getId());
+        if(!entityManager.contains(client)) {
+            client = entityManager.merge(client);
+        }
+            entityManager.remove(client);
     }
 
+    @Transactional
     public void delete(int id) {
-        jdbcTemplate.update(DELETE, new Object[] {id} );
+        delete(entityManager.find(Client.class, id));
     }
 
+    @Transactional
     public Client update(Client client) {
-        jdbcTemplate.update(UPDATE, new Object[] {client.getName(), client.getId()});
+        entityManager.merge(client);
         return client;
     }
 
+    @Transactional(readOnly = true) //optimiza
     public List<Client> findByName(String name) {
-        return jdbcTemplate.query(
-                SELECT_ALL.concat(" where name like ? "),
-                new Object[] {"%"+ name + "%"},
-                getRowMapper());
+        String jpql = "select c from Client c where c.name like :name";
+        TypedQuery<Client> query = entityManager.createQuery(jpql, Client.class);
+        query.setParameter("name", "%" + name + "%");
+        return query.getResultList();
     }
 
+    @Transactional(readOnly = true) //optimiza
     public List<Client> findAll() {
-        return jdbcTemplate.query(SELECT_ALL, getRowMapper());
-    }
-
-    private RowMapper<Client> getRowMapper() {
-        return new RowMapper<Client>() {
-            @Override
-            public Client mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Client(Integer.parseInt(rs.getString("id")), rs.getString("name"));
-            }
-        };
+        return entityManager.createQuery("from Client ", Client.class).getResultList();
     }
 }
