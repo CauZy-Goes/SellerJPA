@@ -19,9 +19,9 @@ public class SellerApplication {
             clientRepository.save(new Client("Caua"));
             clientRepository.save(new Client("maria"));
 
-            System.out.println(clientRepository.existsByName("maria"));
-            System.out.println(clientRepository.findOneByName("Caua"));
-            System.out.println(clientRepository.findByNameOrId(null,1));
+            clientRepository.findAll().forEach(System.out::println);
+
+            System.out.println(clientRepository.encontrarPorNome("ma"));
         };
     }
 
