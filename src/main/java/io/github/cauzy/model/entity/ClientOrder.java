@@ -64,4 +64,15 @@ public class ClientOrder {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "ClientOrder{" +
+                "id=" + id +
+                ", client=" + client +
+                ", orderDate=" + orderDate +
+                ", total=" + total +
+                ", orderItems=" + orderItems +
+                '}';
+    }
 }

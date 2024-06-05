@@ -27,4 +27,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     @Query(" delete from Client c where c.name =:name ")
     @Modifying // para update e delete
     void deleteByName( String name);
+
+    @Query(" select  c from Client c left join fetch c.clientOrders where c.id =:id")
+    Client findClientFetchClientOrder(@Param("id") Integer id);
 }

@@ -18,7 +18,7 @@ public class Client {
     @Column(name = "name", length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Set<ClientOrder> clientOrders;
 
     public Client() {}
